@@ -113,15 +113,15 @@ const Contact = () => {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex items-start gap-4 p-6 bg-card rounded-xl shadow-soft">
+                  <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-6 bg-card rounded-xl shadow-soft hover:shadow-medium transition-shadow">
                     <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
                       <Phone className="w-6 h-6 text-accent" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-foreground mb-1">الهاتف</h3>
-                      <p className="text-muted-foreground" dir="ltr">+966 50 123 4567</p>
+                      <h3 className="font-bold text-foreground mb-1">واتساب</h3>
+                      <p className="text-muted-foreground" dir="ltr">920017195</p>
                     </div>
-                  </div>
+                  </a>
 
                   <div className="flex items-start gap-4 p-6 bg-card rounded-xl shadow-soft">
                     <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -139,7 +139,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-bold text-foreground mb-1">العنوان</h3>
-                      <p className="text-muted-foreground">الرياض، المملكة العربية السعودية</p>
+                      <p className="text-muted-foreground">الخبر، شارع الإمام تركي</p>
                     </div>
                   </div>
                 </div>
