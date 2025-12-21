@@ -69,8 +69,10 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-6">تواصل معنا</h3>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-sm text-primary-foreground/80">
-                <Phone className="h-5 w-5 text-accent" />
-                <span dir="ltr">+966 50 123 4567</span>
+                <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-accent transition-colors">
+                  <Phone className="h-5 w-5 text-accent" />
+                  <span dir="ltr">920017195</span>
+                </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Mail className="h-5 w-5 text-accent" />
@@ -78,7 +80,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3 text-sm text-primary-foreground/80">
                 <MapPin className="h-5 w-5 text-accent flex-shrink-0" />
-                <span>الرياض، المملكة العربية السعودية</span>
+                <span>الخبر، شارع الإمام تركي</span>
               </li>
             </ul>
           </div>
