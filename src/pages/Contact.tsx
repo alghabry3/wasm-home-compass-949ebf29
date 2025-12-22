@@ -1,23 +1,53 @@
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z
+    .string()
+    .min(2, "الاسم يجب أن يكون حرفين على الأقل")
+    .max(100, "الاسم طويل جداً")
+    .regex(/^[\u0600-\u06FFa-zA-Z\s]+$/, "الاسم يجب أن يحتوي على أحرف فقط"),
+  phone: z
+    .string()
+    .regex(/^(05|5)?[0-9]{8,9}$/, "رقم الجوال غير صحيح"),
+  type: z.enum(["استشارة", "شراء", "استثمار", "أخرى"]),
+  message: z
+    .string()
+    .max(1000, "الرسالة طويلة جداً")
+    .optional()
+    .or(z.literal("")),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    type: "استشارة",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      type: "استشارة",
+      message: "",
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: ContactFormData) => {
+    // Data is validated by zod schema
+    console.log("Form submitted with validated data");
     toast.success("تم إرسال رسالتك بنجاح! سنتواصل معك قريباً");
-    setFormData({ name: "", phone: "", type: "استشارة", message: "" });
+    reset();
   };
 
   return (
@@ -49,35 +79,36 @@ const Contact = () => {
               {/* Contact Form */}
               <div className="bg-card p-8 rounded-2xl shadow-medium">
                 <h2 className="text-2xl font-bold text-foreground mb-6">أرسل لنا رسالة</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">الاسم</label>
                     <input
                       type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent"
+                      {...register("name")}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-destructive' : 'border-border'} bg-background focus:outline-none focus:ring-2 focus:ring-accent`}
                       placeholder="أدخل اسمك الكامل"
                     />
+                    {errors.name && (
+                      <p className="text-destructive text-sm mt-1">{errors.name.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">رقم الجوال</label>
                     <input
                       type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent"
+                      {...register("phone")}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-destructive' : 'border-border'} bg-background focus:outline-none focus:ring-2 focus:ring-accent`}
                       placeholder="05xxxxxxxx"
                       dir="ltr"
                     />
+                    {errors.phone && (
+                      <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">نوع الطلب</label>
                     <select
-                      value={formData.type}
-                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                      {...register("type")}
                       className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent"
                     >
                       <option value="استشارة">استشارة عقارية</option>
@@ -89,14 +120,16 @@ const Contact = () => {
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">الرسالة</label>
                     <textarea
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      {...register("message")}
                       rows={4}
-                      className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.message ? 'border-destructive' : 'border-border'} bg-background focus:outline-none focus:ring-2 focus:ring-accent resize-none`}
                       placeholder="اكتب رسالتك هنا..."
                     />
+                    {errors.message && (
+                      <p className="text-destructive text-sm mt-1">{errors.message.message}</p>
+                    )}
                   </div>
-                  <Button type="submit" variant="gold" size="lg" className="w-full gap-2">
+                  <Button type="submit" variant="gold" size="lg" className="w-full gap-2" disabled={isSubmitting}>
                     <Send className="h-4 w-4" />
                     إرسال الرسالة
                   </Button>
