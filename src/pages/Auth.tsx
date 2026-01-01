@@ -37,7 +37,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     }
   }, [user, navigate]);
 
@@ -64,7 +64,7 @@ const Auth = () => {
       }
     } else {
       toast.success('تم تسجيل الدخول بنجاح');
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     }
   };
 
@@ -81,7 +81,7 @@ const Auth = () => {
       }
     } else {
       toast.success('تم إنشاء الحساب بنجاح');
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     }
   };
 
