@@ -1,10 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { 
   MapPin, 
   Home, 
@@ -17,39 +15,15 @@ import {
   Heart,
   Bath
 } from "lucide-react";
-import { propertiesService } from "@/services/properties.service";
+import { propertiesData } from "@/data/properties";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
   
-  const { data: property, isLoading, error } = useQuery({
-    queryKey: ['property', id],
-    queryFn: () => propertiesService.getById(id!),
-    enabled: !!id,
-  });
+  // البحث في البيانات الثابتة
+  const property = propertiesData.find(p => p.id === Number(id));
 
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <main className="pt-20 min-h-screen">
-          <div className="section-container py-12">
-            <Skeleton className="h-[400px] w-full rounded-2xl mb-8" />
-            <Skeleton className="h-10 w-1/2 mb-4" />
-            <Skeleton className="h-6 w-1/3 mb-8" />
-            <div className="grid grid-cols-4 gap-4 mb-8">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
-              ))}
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  if (error || !property) {
+  if (!property) {
     return (
       <>
         <Header />
@@ -68,19 +42,17 @@ const PropertyDetails = () => {
   }
 
   const paymentPlans = [
-    { name: "الدفعة المقدمة", percentage: "10%", amount: Math.round(Number(property.price) * 0.1).toLocaleString() },
-    { name: "عند التعاقد", percentage: "20%", amount: Math.round(Number(property.price) * 0.2).toLocaleString() },
-    { name: "أقساط البناء", percentage: "40%", amount: Math.round(Number(property.price) * 0.4).toLocaleString() },
-    { name: "عند الاستلام", percentage: "30%", amount: Math.round(Number(property.price) * 0.3).toLocaleString() },
+    { name: "الدفعة المقدمة", percentage: "10%", amount: Math.round(property.priceNum * 0.1).toLocaleString() },
+    { name: "عند التعاقد", percentage: "20%", amount: Math.round(property.priceNum * 0.2).toLocaleString() },
+    { name: "أقساط البناء", percentage: "40%", amount: Math.round(property.priceNum * 0.4).toLocaleString() },
+    { name: "عند الاستلام", percentage: "30%", amount: Math.round(property.priceNum * 0.3).toLocaleString() },
   ];
-
-  const features = Array.isArray(property.features) ? property.features : [];
 
   return (
     <>
       <Helmet>
-        <title>{property.title} | وسم هوم العقارية</title>
-        <meta name="description" content={`${property.title} - ${property.property_type || 'عقار'} في ${property.address || 'المملكة العربية السعودية'}. ${property.area} م² بسعر ${Number(property.price).toLocaleString()} ريال.`} />
+        <title>{property.name} | وسم هوم العقارية</title>
+        <meta name="description" content={`${property.name} - ${property.category} في ${property.district}، ${property.city}. ${property.area} م² بسعر ${property.price} ريال.`} />
       </Helmet>
 
       <Header />
@@ -94,7 +66,7 @@ const PropertyDetails = () => {
               <ArrowRight className="w-4 h-4 rotate-180" />
               <Link to="/projects" className="hover:text-accent">العقارات</Link>
               <ArrowRight className="w-4 h-4 rotate-180" />
-              <span className="text-foreground">{property.title}</span>
+              <span className="text-foreground">{property.name}</span>
             </nav>
           </div>
         </div>
@@ -102,17 +74,11 @@ const PropertyDetails = () => {
         {/* Hero Image */}
         <section className="relative">
           <div className="aspect-[21/9] max-h-[500px] overflow-hidden">
-            {property.images && Array.isArray(property.images) && property.images.length > 0 ? (
-              <img
-                src={property.images[0] as string}
-                alt={property.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-muted flex items-center justify-center">
-                <Building2 className="w-20 h-20 text-muted-foreground" />
-              </div>
-            )}
+            <img
+              src={property.image}
+              alt={property.name}
+              className="w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
           </div>
           
@@ -131,9 +97,11 @@ const PropertyDetails = () => {
             <span className={`px-4 py-2 rounded-full font-bold ${
               property.status === "للبيع" 
                 ? "bg-accent text-accent-foreground" 
-                : "bg-primary text-primary-foreground"
+                : property.status === "للإيجار"
+                ? "bg-blue-500 text-white"
+                : "bg-red-500 text-white"
             }`}>
-              {property.status || "للبيع"}
+              {property.status}
             </span>
           </div>
         </section>
@@ -148,20 +116,18 @@ const PropertyDetails = () => {
                 <div>
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
-                      {property.property_type || "عقار"}
+                      {property.category}
                     </span>
-                    {property.financing_available && (
-                      <span className="px-3 py-1 bg-green-500/10 text-green-600 rounded-full text-sm">
-                        تمويل متاح
-                      </span>
-                    )}
+                    <span className="px-3 py-1 bg-secondary text-foreground rounded-full text-sm">
+                      {property.type}
+                    </span>
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                    {property.title}
+                    {property.name}
                   </h1>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="w-5 h-5 text-accent" />
-                    <span>{property.address || "الموقع غير محدد"}</span>
+                    <span>{property.district}، {property.city}</span>
                   </div>
                 </div>
 
@@ -175,7 +141,7 @@ const PropertyDetails = () => {
                   <div className="bg-card p-4 rounded-xl text-center shadow-soft">
                     <Home className="w-6 h-6 text-accent mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground">الغرف</p>
-                    <p className="font-bold text-foreground">{property.bedrooms || "-"}</p>
+                    <p className="font-bold text-foreground">{property.rooms || "-"}</p>
                   </div>
                   <div className="bg-card p-4 rounded-xl text-center shadow-soft">
                     <Bath className="w-6 h-6 text-accent mx-auto mb-2" />
@@ -184,8 +150,8 @@ const PropertyDetails = () => {
                   </div>
                   <div className="bg-card p-4 rounded-xl text-center shadow-soft">
                     <Building2 className="w-6 h-6 text-accent mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">النوع</p>
-                    <p className="font-bold text-foreground text-sm">{property.property_type || "-"}</p>
+                    <p className="text-sm text-muted-foreground">المطور</p>
+                    <p className="font-bold text-foreground text-sm">{property.developer}</p>
                   </div>
                 </div>
 
@@ -193,19 +159,21 @@ const PropertyDetails = () => {
                 <div className="bg-card p-6 rounded-2xl shadow-soft">
                   <h2 className="text-xl font-bold text-foreground mb-4">وصف العقار</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    {property.description || `${property.title} هو عقار مميز يتميز بموقعه الاستراتيجي وتصميمه العصري. بمساحة إجمالية ${property.area} متر مربع، يوفر هذا العقار تجربة معيشية فريدة.`}
+                    {property.name} هو عقار مميز يتميز بموقعه الاستراتيجي في {property.district} بمدينة {property.city}. 
+                    بمساحة إجمالية {property.area} متر مربع، يوفر هذا العقار تجربة معيشية فريدة مع {property.rooms} غرف و {property.bathrooms} حمامات.
+                    مقدم من {property.developer}.
                   </p>
                 </div>
 
                 {/* Features */}
-                {features.length > 0 && (
+                {property.features.length > 0 && (
                   <div className="bg-card p-6 rounded-2xl shadow-soft">
                     <h2 className="text-xl font-bold text-foreground mb-4">المميزات</h2>
                     <div className="grid sm:grid-cols-2 gap-3">
-                      {features.map((feature, index) => (
+                      {property.features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <CheckCircle className="w-5 h-5 text-accent" />
-                          <span className="text-foreground">{String(feature)}</span>
+                          <span className="text-foreground">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -240,7 +208,7 @@ const PropertyDetails = () => {
                 <div className="bg-card p-6 rounded-2xl shadow-medium sticky top-24">
                   <div className="text-center mb-6">
                     <p className="text-sm text-muted-foreground mb-1">السعر</p>
-                    <p className="text-3xl font-bold text-accent">{Number(property.price).toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-accent">{property.price}</p>
                     <p className="text-muted-foreground">ريال سعودي</p>
                   </div>
 
@@ -256,17 +224,15 @@ const PropertyDetails = () => {
                     </Button>
                   </div>
 
-                  {property.financing_available && (
-                    <div className="mt-6 pt-6 border-t border-border">
-                      <h3 className="font-bold text-foreground mb-3">هل تحتاج تمويل؟</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        نساعدك في الحصول على أفضل عروض التمويل العقاري
-                      </p>
-                      <Button variant="outline" size="sm" className="w-full" asChild>
-                        <Link to="/financing-solutions">اكتشف خيارات التمويل</Link>
-                      </Button>
-                    </div>
-                  )}
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <h3 className="font-bold text-foreground mb-3">هل تحتاج تمويل؟</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      نساعدك في الحصول على أفضل عروض التمويل العقاري
+                    </p>
+                    <Button variant="outline" size="sm" className="w-full" asChild>
+                      <Link to="/financing-solutions">اكتشف خيارات التمويل</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
