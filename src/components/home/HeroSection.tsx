@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Play } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
@@ -37,13 +38,17 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-up animation-delay-300">
-            <Button variant="gold" size="xl" className="w-full sm:w-auto gap-2">
-              ابدأ الاستشارة الذكية
-              <ArrowLeft className="h-5 w-5" />
+            <Button variant="gold" size="xl" className="w-full sm:w-auto gap-2" asChild>
+              <Link to="/smart-advisor">
+                ابدأ الاستشارة الذكية
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
             </Button>
-            <Button variant="heroOutline" size="xl" className="w-full sm:w-auto gap-2">
-              <Play className="h-5 w-5" />
-              تصفح المشاريع
+            <Button variant="heroOutline" size="xl" className="w-full sm:w-auto gap-2" asChild>
+              <Link to="/projects">
+                <Play className="h-5 w-5" />
+                تصفح المشاريع
+              </Link>
             </Button>
           </div>
 

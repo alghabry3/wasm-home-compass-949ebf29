@@ -37,7 +37,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/admin');
     }
   }, [user, navigate]);
 
@@ -64,7 +64,7 @@ const Auth = () => {
       }
     } else {
       toast.success('تم تسجيل الدخول بنجاح');
-      navigate('/');
+      navigate('/admin');
     }
   };
 
@@ -81,7 +81,7 @@ const Auth = () => {
       }
     } else {
       toast.success('تم إنشاء الحساب بنجاح');
-      navigate('/');
+      navigate('/admin');
     }
   };
 

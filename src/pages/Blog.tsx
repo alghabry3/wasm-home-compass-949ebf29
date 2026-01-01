@@ -240,8 +240,10 @@ const Blog = () => {
             {/* Load More */}
             {filteredPosts.length > 0 && (
               <div className="text-center mt-12">
-                <Button variant="outline" size="lg">
-                  تحميل المزيد من المقالات
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/blog">
+                    تحميل المزيد من المقالات
+                  </Link>
                 </Button>
               </div>
             )}
