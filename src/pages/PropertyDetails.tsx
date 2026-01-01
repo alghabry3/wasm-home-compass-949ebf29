@@ -7,20 +7,21 @@ import {
   MapPin, 
   Home, 
   Ruler, 
-  Calendar, 
   Building2, 
   CheckCircle, 
   Phone,
   ArrowRight,
   Share2,
   Heart,
-  Play
+  Bath
 } from "lucide-react";
 import { propertiesData } from "@/data/properties";
 
-const ProjectDetails = () => {
+const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const property = propertiesData.find((p) => p.id === Number(id));
+  
+  // البحث في البيانات الثابتة
+  const property = propertiesData.find(p => p.id === Number(id));
 
   if (!property) {
     return (
@@ -51,10 +52,10 @@ const ProjectDetails = () => {
     <>
       <Helmet>
         <title>{property.name} | وسم هوم العقارية</title>
-        <meta name="description" content={`${property.name} - ${property.type} في ${property.city}، ${property.district}. ${property.area} م² بسعر ${property.price} ريال.`} />
-        <link rel="canonical" href={`https://wasmhome.sa/projects/${id}`} />
+        <meta name="description" content={`${property.name} - ${property.category} في ${property.district}، ${property.city}. ${property.area} م² بسعر ${property.price} ريال.`} />
+        <link rel="canonical" href={`https://wasmhome.sa/properties/${id}`} />
         <meta property="og:title" content={`${property.name} | وسم هوم العقارية`} />
-        <meta property="og:description" content={`${property.name} - ${property.type} في ${property.city}، ${property.district}.`} />
+        <meta property="og:description" content={`${property.name} - ${property.category} في ${property.district}، ${property.city}.`} />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -67,7 +68,7 @@ const ProjectDetails = () => {
             <nav className="flex items-center gap-2 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-accent">الرئيسية</Link>
               <ArrowRight className="w-4 h-4 rotate-180" />
-              <Link to="/projects" className="hover:text-accent">المشاريع</Link>
+              <Link to="/projects" className="hover:text-accent">العقارات</Link>
               <ArrowRight className="w-4 h-4 rotate-180" />
               <span className="text-foreground">{property.name}</span>
             </nav>
@@ -100,7 +101,9 @@ const ProjectDetails = () => {
             <span className={`px-4 py-2 rounded-full font-bold ${
               property.status === "للبيع" 
                 ? "bg-accent text-accent-foreground" 
-                : "bg-primary text-primary-foreground"
+                : property.status === "للإيجار"
+                ? "bg-blue-500 text-white"
+                : "bg-red-500 text-white"
             }`}>
               {property.status}
             </span>
@@ -117,10 +120,10 @@ const ProjectDetails = () => {
                 <div>
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
-                      {property.type}
-                    </span>
-                    <span className="px-3 py-1 bg-secondary rounded-full text-sm">
                       {property.category}
+                    </span>
+                    <span className="px-3 py-1 bg-secondary text-foreground rounded-full text-sm">
+                      {property.type}
                     </span>
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -128,7 +131,7 @@ const ProjectDetails = () => {
                   </h1>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="w-5 h-5 text-accent" />
-                    <span>{property.city}، {property.district}</span>
+                    <span>{property.district}، {property.city}</span>
                   </div>
                 </div>
 
@@ -145,12 +148,12 @@ const ProjectDetails = () => {
                     <p className="font-bold text-foreground">{property.rooms || "-"}</p>
                   </div>
                   <div className="bg-card p-4 rounded-xl text-center shadow-soft">
-                    <Building2 className="w-6 h-6 text-accent mx-auto mb-2" />
+                    <Bath className="w-6 h-6 text-accent mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground">دورات المياه</p>
                     <p className="font-bold text-foreground">{property.bathrooms || "-"}</p>
                   </div>
                   <div className="bg-card p-4 rounded-xl text-center shadow-soft">
-                    <Calendar className="w-6 h-6 text-accent mx-auto mb-2" />
+                    <Building2 className="w-6 h-6 text-accent mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground">المطور</p>
                     <p className="font-bold text-foreground text-sm">{property.developer}</p>
                   </div>
@@ -160,24 +163,26 @@ const ProjectDetails = () => {
                 <div className="bg-card p-6 rounded-2xl shadow-soft">
                   <h2 className="text-xl font-bold text-foreground mb-4">وصف العقار</h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    {property.name} هو عقار مميز يقع في {property.district} بمدينة {property.city}. 
-                    يتميز بموقعه الاستراتيجي وتصميمه العصري الذي يلبي جميع احتياجاتك السكنية أو الاستثمارية.
-                    بمساحة إجمالية {property.area} متر مربع، يوفر هذا العقار تجربة معيشية فريدة مع جميع المرافق والخدمات المتكاملة.
+                    {property.name} هو عقار مميز يتميز بموقعه الاستراتيجي في {property.district} بمدينة {property.city}. 
+                    بمساحة إجمالية {property.area} متر مربع، يوفر هذا العقار تجربة معيشية فريدة مع {property.rooms} غرف و {property.bathrooms} حمامات.
+                    مقدم من {property.developer}.
                   </p>
                 </div>
 
                 {/* Features */}
-                <div className="bg-card p-6 rounded-2xl shadow-soft">
-                  <h2 className="text-xl font-bold text-foreground mb-4">المميزات</h2>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {property.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-accent" />
-                        <span className="text-foreground">{feature}</span>
-                      </div>
-                    ))}
+                {property.features.length > 0 && (
+                  <div className="bg-card p-6 rounded-2xl shadow-soft">
+                    <h2 className="text-xl font-bold text-foreground mb-4">المميزات</h2>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {property.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CheckCircle className="w-5 h-5 text-accent" />
+                          <span className="text-foreground">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Payment Plan */}
                 <div className="bg-card p-6 rounded-2xl shadow-soft">
@@ -198,9 +203,6 @@ const ProjectDetails = () => {
                       </div>
                     ))}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    * خطط الدفع قابلة للتفاوض. تواصل معنا لمعرفة المزيد.
-                  </p>
                 </div>
               </div>
 
@@ -209,7 +211,7 @@ const ProjectDetails = () => {
                 {/* Price Card */}
                 <div className="bg-card p-6 rounded-2xl shadow-medium sticky top-24">
                   <div className="text-center mb-6">
-                    <p className="text-sm text-muted-foreground mb-1">السعر يبدأ من</p>
+                    <p className="text-sm text-muted-foreground mb-1">السعر</p>
                     <p className="text-3xl font-bold text-accent">{property.price}</p>
                     <p className="text-muted-foreground">ريال سعودي</p>
                   </div>
@@ -218,7 +220,7 @@ const ProjectDetails = () => {
                     <Button variant="gold" size="lg" className="w-full gap-2" asChild>
                       <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer">
                         <Phone className="w-5 h-5" />
-                        احجز الآن
+                        تواصل الآن
                       </a>
                     </Button>
                     <Button variant="outline" size="lg" className="w-full" asChild>
@@ -270,4 +272,4 @@ const ProjectDetails = () => {
   );
 };
 
-export default ProjectDetails;
+export default PropertyDetails;

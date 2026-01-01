@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
-
 const navItems = [
   { label: "الرئيسية", href: "/" },
   { label: "المشاريع", href: "/projects" },
@@ -25,13 +25,15 @@ const navItems = [
   { label: "تواصل معنا", href: "/contact" },
 ];
 
-const Header = () => {
+const Header = forwardRef<HTMLElement>((_, ref) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const location = useLocation();
+  const { user, isAdmin } = useAuth();
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 glass border-b border-border/50">
+    <header ref={ref} className="fixed top-0 right-0 left-0 z-50 glass border-b border-border/50">
+    
       <div className="section-container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -81,12 +83,36 @@ const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button variant="gold" size="lg" className="gap-2" asChild>
-              <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer">
-                <Phone className="h-4 w-4" />
-                تحدث مع مستشار
-              </a>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button variant="outline" size="lg" asChild>
+                    <Link to="/admin">لوحة التحكم</Link>
+                  </Button>
+                )}
+                <Button variant="gold" size="lg" className="gap-2" asChild>
+                  <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer">
+                    <Phone className="h-4 w-4" />
+                    تحدث مع مستشار
+                  </a>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="lg" className="gap-2" asChild>
+                  <Link to="/auth">
+                    <User className="h-4 w-4" />
+                    تسجيل الدخول
+                  </Link>
+                </Button>
+                <Button variant="gold" size="lg" className="gap-2" asChild>
+                  <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer">
+                    <Phone className="h-4 w-4" />
+                    تحدث مع مستشار
+                  </a>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -144,7 +170,23 @@ const Header = () => {
                   )}
                 </div>
               ))}
-              <Button variant="gold" size="lg" className="mt-4 gap-2" asChild>
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Button variant="outline" size="lg" className="mt-4 w-full" asChild>
+                      <Link to="/admin" onClick={() => setIsMenuOpen(false)}>لوحة التحكم</Link>
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <Button variant="outline" size="lg" className="mt-4 w-full gap-2" asChild>
+                  <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                    <User className="h-4 w-4" />
+                    تسجيل الدخول
+                  </Link>
+                </Button>
+              )}
+              <Button variant="gold" size="lg" className="mt-2 w-full gap-2" asChild>
                 <a href="https://wa.me/966920017195" target="_blank" rel="noopener noreferrer">
                   <Phone className="h-4 w-4" />
                   تحدث مع مستشار
@@ -156,6 +198,8 @@ const Header = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

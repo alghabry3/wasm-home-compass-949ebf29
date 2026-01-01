@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import { Brain, Shield, Eye, HeadphonesIcon } from "lucide-react";
 
 const features = [
@@ -23,9 +24,9 @@ const features = [
   },
 ];
 
-const WhyUsSection = () => {
+const WhyUsSection = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   return (
-    <section className="py-20 bg-primary text-primary-foreground">
+    <section ref={ref} className="py-20 bg-primary text-primary-foreground" {...props}>
       <div className="section-container">
         {/* Header */}
         <div className="text-center mb-16">
@@ -58,6 +59,8 @@ const WhyUsSection = () => {
       </div>
     </section>
   );
-};
+});
+
+WhyUsSection.displayName = "WhyUsSection";
 
 export default WhyUsSection;

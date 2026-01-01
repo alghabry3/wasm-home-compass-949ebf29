@@ -1,6 +1,7 @@
 import { MapPin, BedDouble, Bath, Maximize, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 export interface Property {
   id: number;
@@ -120,8 +121,8 @@ const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
               {property.price} <span className="text-sm">ر.س</span>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent transition-colors">
-            التفاصيل
+          <Button variant="outline" size="sm" className="group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent transition-colors" asChild>
+            <Link to={`/properties/${property.id}`}>التفاصيل</Link>
           </Button>
         </div>
       </div>

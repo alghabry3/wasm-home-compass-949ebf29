@@ -173,9 +173,11 @@ const Blog = () => {
                       {featuredPost.date}
                     </div>
                   </div>
-                  <Button variant="gold" className="gap-2">
-                    قراءة المقال
-                    <ArrowLeft className="h-4 w-4" />
+                  <Button variant="gold" className="gap-2" asChild>
+                    <Link to={`/blog/${featuredPost.id}`}>
+                      قراءة المقال
+                      <ArrowLeft className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -217,10 +219,13 @@ const Blog = () => {
                             <Calendar className="h-4 w-4" />
                             {post.date}
                           </div>
-                          <button className="text-accent font-medium flex items-center gap-1 hover:gap-2 transition-all">
+                          <Link 
+                            to={`/blog/${post.id}`}
+                            className="text-accent font-medium flex items-center gap-1 hover:gap-2 transition-all"
+                          >
                             اقرأ المزيد
                             <ArrowLeft className="h-4 w-4" />
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </article>
@@ -235,8 +240,10 @@ const Blog = () => {
             {/* Load More */}
             {filteredPosts.length > 0 && (
               <div className="text-center mt-12">
-                <Button variant="outline" size="lg">
-                  تحميل المزيد من المقالات
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/blog">
+                    تحميل المزيد من المقالات
+                  </Link>
                 </Button>
               </div>
             )}

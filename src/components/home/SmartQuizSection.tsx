@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Home, TrendingUp, MapPin, Wallet, ArrowLeft } from "lucide-react";
 
-const SmartQuizSection = () => {
+const SmartQuizSection = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({
     purpose: "",
@@ -52,7 +52,7 @@ const SmartQuizSection = () => {
   const isComplete = step === questions.length - 1 && answers.budget;
 
   return (
-    <section className="py-20 bg-secondary">
+    <section ref={ref} className="py-20 bg-secondary" {...props}>
       <div className="section-container">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
@@ -122,6 +122,8 @@ const SmartQuizSection = () => {
       </div>
     </section>
   );
-};
+});
+
+SmartQuizSection.displayName = "SmartQuizSection";
 
 export default SmartQuizSection;

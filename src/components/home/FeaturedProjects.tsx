@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { MapPin, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -69,7 +69,7 @@ const projects = [
   },
 ];
 
-const FeaturedProjects = () => {
+const FeaturedProjects = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) => {
   const [activeTab, setActiveTab] = useState("living");
 
   const filteredProjects = projects.filter((project) =>
@@ -77,7 +77,7 @@ const FeaturedProjects = () => {
   );
 
   return (
-    <section className="py-20">
+    <section ref={ref} className="py-20" {...props}>
       <div className="section-container">
         {/* Header */}
         <div className="text-center mb-12">
@@ -144,8 +144,8 @@ const FeaturedProjects = () => {
                       {project.price} <span className="text-sm">ر.س</span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">
-                    التفاصيل
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/projects/${project.id}`}>التفاصيل</Link>
                   </Button>
                 </div>
               </div>
@@ -165,6 +165,8 @@ const FeaturedProjects = () => {
       </div>
     </section>
   );
-};
+});
+
+FeaturedProjects.displayName = "FeaturedProjects";
 
 export default FeaturedProjects;
