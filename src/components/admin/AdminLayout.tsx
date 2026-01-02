@@ -84,6 +84,11 @@ const menuItems = [
     href: '/admin/odoo-integration',
   },
   {
+    label: 'المستخدمين والصلاحيات',
+    icon: Users,
+    href: '/admin/users',
+  },
+  {
     label: 'الإعدادات',
     icon: Settings,
     href: '/admin/settings',

@@ -47,6 +47,7 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const OdooIntegration = lazy(() => import("./pages/admin/OdooIntegration"));
 const AdminBlog = lazy(() => import("./pages/admin/AdminBlog"));
 const AdminFAQs = lazy(() => import("./pages/admin/AdminFAQs"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 
 const queryClient = new QueryClient();
 
@@ -91,9 +92,9 @@ const App = () => (
                 <Route path="/housing-support" element={<HousingSupport />} />
                 <Route path="/auth" element={<Auth />} />
                 
-                {/* Admin Routes - TEMP: requireAdmin removed for debugging */}
+                {/* Admin Routes */}
                 <Route path="/admin" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAdmin>
                     <AdminDashboard />
                   </ProtectedRoute>
                 } />
@@ -155,6 +156,11 @@ const App = () => (
                 <Route path="/admin/faqs" element={
                   <ProtectedRoute requireAdmin>
                     <AdminFAQs />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminUsers />
                   </ProtectedRoute>
                 } />
                 
